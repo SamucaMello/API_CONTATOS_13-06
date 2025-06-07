@@ -17,4 +17,8 @@ app.use(cors())
 
 app.use("/contatos", contatosRoute)
 
+app.get("/", (req,res)=>{
+    return res.send(`teste em ${req.get("host")}/contatos`)
+})
+
 app.listen(process.env.PORT, () => console.log(`Rodando na porta ${process.env.PORT}`))
