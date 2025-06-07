@@ -17,8 +17,9 @@ app.use(cors())
 
 app.use("/contatos", contatosRoute)
 
-app.get("/", (req,res)=>{
-    return res.send(`teste em ${req.get("host")}/contatos`)
+app.get("/", (req, res) => {
+    const contatosUrl =  `${req.protocol}://${req.host}/contatos`
+    return res.send(`<h1> Teste em <a href = '${contatosUrl}'>contatos</a> </h1>`)
 })
 
 app.listen(process.env.PORT, () => console.log(`Rodando na porta ${process.env.PORT}`))
