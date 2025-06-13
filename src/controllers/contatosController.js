@@ -1,12 +1,66 @@
-import { contato } from "../models/contatosModel.js";
+import { Router } from "express";
+import { Types } from "mongoose";
+import { createContatoService, deleteContatoByIdService, getAllContatosService, getContatoByIdService, updateContatoByIdService } from "../services/contatosService.js";
+import { validId } from "../middlewares/utilMiddleware.js";
+
+const contatosRoute = Router()
+
+// :id -> GET
+const getContatoById = async (req, res) => {
+    const contato = await getContatoById(req.contatoId)
+
+    if (!contato) {
+        return res.status(400).send({ erro: "Contato não encontrado" })
+    }
+
+    return res.send({ contato })
+}
+
+// -> GET
+const getAllContatos = async (req,res)=>{
+    const allContatos = await getAllContatos()
+    return res.send(allContatos)
+}
+
+// -> POST + body
+const createContato = async (req, res) => {
+    const { nome, telefone, email, foto } = req.body
+
+    if (!nome || !telefone || email) {
+        return res.status(400).send({ erro: "Preencha todos os campos." })
+    }
+
+    try {
+        await createContato(nome, telefone, email, foto)
+        return res.send({ sucesso: "Contato criado com sucesso!" })
+    } catch {
+        return res.status(404).send({ erro: "Tente outro número de telefone ou e-mail." })
+    }
+}
+
+// -> id na query + metodo PUT
+const updateContatoById = async (req, res) => {
+      const { nome, email, telefone, foto } = req.body
+
+    if (!nome && !email && !telefone && !foto) {
+        return res.status(400).send({ erro: "Preencha pelo menos um campo." })
+    }
+
+    await updateContatoById(req.contatoId, req.body)
+
+    return res.send({ sucesso: "contato atualizado com sucesso!" })
+
+}
 
 
-export const createContato     = (nome, telefone, email, foto) => contato.create({nome, telefone, email, foto})
+//->ID na query + metodo delete
+const deleteContato = async (req,res) => {
+    
+    await deleteContatoById(req.contatoId)
 
-export const updateContatoById = (_id, body) => contato.findByIdAndUpdate(_id, body)
+    return res.send({ sucesso: "Contato apagado com sucesso!" })
+}
 
-export const deleteContatoById = (_id) => contato.findByIdAndDelete(_id) 
 
-export const getContatoById    = (_id) => contato.findById(_id)
 
-export const getAllContatos    = () => contato.find()
+export default {createContato, getAllContatos, getContatoById, updateContatoById, deleteContato}
