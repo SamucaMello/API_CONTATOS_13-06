@@ -7,6 +7,7 @@ const userSchema = new Schema({
     senha: {type:String, required:true}
 })
 
+
 userSchema.pre("save", async function(next){
     if(!this.isModified("senha")) return next();
     const salt = await bcrypt.genSalt(10)
@@ -17,4 +18,4 @@ userSchema.methods.compararSenha = function(senhaDigitada){
     return bcrypt.compare(senhaDigitada, this.senha)
 }
 
-export const user = model("Usuario", userSchema)
+export const user = model("Usuario", userSchema, "Usuarios")

@@ -2,12 +2,10 @@
 import jwt from "jsonwebtoken"
 import {user} from "../models/userModel.js"
 
-// Registra um novo usuário
-
  const registrar = async (req, res) => {
-    const { nome, email, senha } = req.body;
     try {
-        const usuario = new Usuario({ nome, email, senha });
+        const { nome, email, senha } = req.body;
+        const usuario = await user.create({nome,email,senha})
         await usuario.save();
         res.status(201).json({ mensagem: 'Usuário criado com sucesso' });
     } catch (err) {
@@ -15,20 +13,18 @@ import {user} from "../models/userModel.js"
     }
 };
 
- const isAlive = async (req,res) => {
-    return res.send("alive")
-}
 
-// Realiza login, verifica senha e retorna o token JWT
 
  const login = async (req, res) => {
-    const { email, senha } = req.body;
+   
     try {
-        const usuario = await Usuario.findOne({ email });
+         const { email, senha } = req.body;
+        const usuario = await user.findOne({email})
+
         if (!usuario || !(await usuario.compararSenha(senha))) {
             return res.status(401).json({ mensagem: 'Credenciais inválidas' });
         }
-        // Geração do token com validade de 1 hora
+        
         const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token });
     } catch (err) {
@@ -37,4 +33,4 @@ import {user} from "../models/userModel.js"
 };
 
 
-export {login, registrar, isAlive}
+export {login, registrar}

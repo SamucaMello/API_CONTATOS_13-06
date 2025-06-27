@@ -1,20 +1,20 @@
 import { Router } from "express";
 import { Types } from "mongoose";
-import { validId } from "../middlewares/utilMiddleware.js";
+import { authMiddleware, validId } from "../middlewares/middlewares.js";
 import contatosController from "../controllers/contatosController.js"
 
 const contatosRoute = Router()
 
-contatosRoute.get("/:id", validId, contatosController.getContatoById)
+contatosRoute.get("/get/:id", validId, authMiddleware, contatosController.getContatoById)
 
 
-contatosRoute.get("/",contatosController.getAllContatos)
+contatosRoute.get("/get", authMiddleware, contatosController.getAllContatos)
 
 
-contatosRoute.post("/",contatosController.createContato)
+contatosRoute.post("/create", authMiddleware, contatosController.createContato)
 
-contatosRoute.put("/:id", validId, contatosController.updateContatoById)
+contatosRoute.put("/update/:id", validId, authMiddleware, contatosController.updateContatoById)
 
-contatosRoute.delete("/:id", validId, contatosController.deleteContatoById)
+contatosRoute.delete("/delete/:id", validId,authMiddleware, contatosController.deleteContato)
 
 export default  contatosRoute 
